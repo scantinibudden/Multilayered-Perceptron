@@ -6,8 +6,8 @@ import pandas as pd
 
 # ========================= SETTINGS =======================
 
-L = 0                   # number of layers
-S = [0, 0, 0, 0]        # number of neurons per layer
+S = [2, 3]        # array with number of neurons per layer
+L = len(S)              # number of layers
 W = []                  # array of weight matrices
 dY = []                 # array of derivatives of the output of each layer
 r = 0.01                # learning rate
@@ -79,8 +79,28 @@ def estimation(X, Y):
 
 # add bias to the input
 def addBias(X):
-    return X.append(-1)
+    return np.concatenate((X, np.ones((X.shape[0], 1))), axis = 1)
 
 # remove bias from the input
 def subBias(X):
     return X.pop()
+
+# generate random weights
+def createRandomWeights(X):
+    w = []
+    initialW = generateWeights(X.shape[1], S[0])                # first weight matrix
+    w.append(initialW)                                   # array of weight matrices
+    for i in range(0, L - 1):
+        layerW = generateWeights(S[i], S[i + 1])
+        w.append(layerW)
+    return w
+
+def generateWeights(n, m):
+    return np.matrix(np.random.uniform(-1, 1, (n, m)))
+
+X = np.array([[1,1],
+     [1,-1],
+     [-1,1],
+     [-1,-1]])
+
+print(createRandomWeights(addBias(X)))
