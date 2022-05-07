@@ -20,11 +20,11 @@ def feedForward(X, activationFunc):                 # Xh is what we're trying to
     for k in range(1, L-1):                         # k is the current layer index
         Y.append(addBias(T))                        # add bias to the input
         T = activationFunc(np.dot(Y[k-1], W[k]))    # calculate the output of the layer
-    Y[L-1] = T                                      # add the output of the last layer 
+    Y.append(T)                                     # add the output of the last layer 
     return Y                                        # return the output of each layer
 
 def backPropagation(Y, Z):                          # Y are the activation levels and Z are the desired output
-    dW = []                                         # delta W is the change in the weight matrix
+    dW = [None] * L                                 # delta W is the change in the weight matrix
     E = Z - Y[L-1]                                  # error is the difference between the desired output and the output of the last layer
     D = np.array(L, dtype = float)                  # initialization of D as an empty array
     D[L-1] = E * dY[L-1]                            # dY is the derivative of the output of L-1 layer, and D[L-1] is the product of E and dY
