@@ -19,7 +19,8 @@ def feedForward(X, activationFunc):                 # Xh is what we're trying to
     T = X                                           # T is the input of the next layer
     for k in range(1, L-1):                         # k is the current layer index
         Y.append(addBias(T))                        # add bias to the input
-        T = activationFunc(np.dot(Y[k-1], W[k]))    # calculate the output of the layer
+        T, dT = activationFunc(np.dot(Y[k-1], W[k]))# calculate the output of the layer
+        dY.append(dT)                               # save the derivative of the output
     Y.append(T)                                     # add the output of the last layer 
     return Y                                        # return the output of each layer
 
