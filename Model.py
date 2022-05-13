@@ -5,13 +5,14 @@ import numpy as np
 # import pandas as pd
 
 class Model():
-    def __init__(self, X, Z, S, activationFuncArray = [], learningRate = 0.01, maxIter = 100):
+    def __init__(self, X, Z, S, activationFuncArray = [], learningRate = 0.1, maxIter = 100):
     # ========================= VARS =======================
 
         self.X = X                                                      # input
         self.Z = Z                                                      # expected output
-        self.S = S                                                      # array with number of neurons per layer
+        self.S = S                                                      # array with number of neurons per inner layer
         self.S.insert(0, X.shape[1])
+        self.S.append(Z.shape[1])
         self.layers = len(S)                                            # number of layers
         self.W = self.createRandomWeights()                             # array of weight matrices
         self.learningRate = learningRate                                # learning rate
@@ -43,23 +44,25 @@ class Model():
         return Y, dY                                                    # return the output of each layer
 
 #a = np.empty(n)
-    def backPropagation(self, Y, dY, h):                                # Y are the activation levels and Z are the desired output
-        dW = [None] * self.layers                                       # delta W is the change in the weight matrix
-        E = self.Z[h] - Y[self.layers - 1]                              # error is the difference between the desired output and the output of the last layer
-        D = [None] * self.layers                                        # initialization of D as an empty array
-        D[self.layers-1] = E * dY[self.layers - 1]                      # dY is the derivative of the output of L-1 layer, and D[layers-1] is the product of E and dY
-        for k in range(self.layers, 1):                                 # k is the current layer index
-            dW[k] = self.learningRate * np.dot(Y[k-1].T, D[k])          # dW is the change in the weight matrix
-            E = np.dot(D[k], self.W[k].T)                               # E is the error of the next layer = dW * dY
-            D[k-1] = self.subBias(E * dY[self.layers - 1 - k])          # dY is the derivative of the output of L-1 layer, and D[layers-1] is the product of E and dY
-        return dW                                                       # return the change in the weight matrix
+    def backPropagation(self, Y, dY, h):                                                                            # Y are the activation levels and Z are the desired output
+        dW = [None] * self.layers                                                                                   # delta W is the change in the weight matrix
+        E = np.array(self.Z[h] - Y[self.layers - 1])                                                                # error is the difference between the desired output and the output of the last layer
+        D = [None] * self.layers                                                                                    # initialization of D as an empty array
+
+        D[self.layers-1] = np.multiply(E, dY[self.layers - 1])                                                                  # dY is the derivative of the output of L-1 layer, and D[layers-1] is the product of E and dY
+        for k in range(1, self.layers):                                                                             # k is the current layer index
+            j = self.layers - k
+            dW[j-1] = self.learningRate*np.dot(np.transpose(np.reshape(Y[j-1], (1,Y[j-1].shape[0]))), D[j])         # dW is the change in the weight matrix
+            E = np.dot(D[j], np.transpose(self.W[j-1]))                                                             # E is the error of the next layer = dW * dY
+        return dW                                                                                                   # return the change in the weight matrix
     
     def train(self):
         ans = []
         for h in range(len(self.X)):
-            Y, dY = self.feedForward(self.X[h])                                    # get the output of each layer
-            ans.append(Y[self.layers - 1])                                        # save the output of the last layer
-            self.backPropagation(Y, dY, h)
+            Y, dY = self.feedForward(self.X[h])                         # get the output of each layer
+            ans.append(np.array(Y[self.layers - 1]))                              # save the output of the last layer
+            dW = self.backPropagation(Y, dY, h)
+            self.adaptation(dW)
         return ans
         
             
@@ -70,7 +73,7 @@ class Model():
     # sigmoid activation function
     def sigmoid(self, x):                                    
         s=1/(1+np.exp(x))
-        ds=s*(1-s)  
+        ds=np.multiply(s, (1-s))
         return s,ds
 
     # tanh activation function
@@ -91,19 +94,19 @@ class Model():
     def softmax(self, x):                                     
         softmax = np.exp(x) / np.sum(np.exp(x))
         softmax = np.reshape(softmax, (1, -1))
-        d_softmax = (softmax * np.identity(softmax.size) - softmax.transpose() @ softmax)
+        d_softmax = np.multiply(softmax, np.dot(np.identity(softmax.size) - softmax.transpose(), softmax))
         return softmax,d_softmax
 
     def escalonada(self, x):
-        return np.sign(x), 0
-        
+        sign = np.sign(x)
+        return sign, np.ones(sign.shape)
+            
     # ========================= AUXILIARY =========================
 
     # adaptation function
-    def adaptation(self, y1, y2): 
-        for k in range(1, self.layers-1):
-            y1[k] = y1[k] + y2[k]
-        return y1
+    def adaptation(self, dW): 
+        for k in range(1, self.layers):       #k es la layer
+            self.W[k-1] = self.W[k-1] + dW[k-1]
 
     # estimation function
     def estimation(self, Y): 
@@ -115,8 +118,8 @@ class Model():
         return np.append(x, 1)
 
     # remove bias from the input
-    def subBias(self):
-        return self.X.pop()
+    def subBias(self,Y):
+        return Y[:,:-1]
 
 
     def generateWeights(self, n, m):
@@ -133,34 +136,15 @@ class Model():
 X = np.array([[1,1],
     [1,-1],
     [-1,1],
-    [-1,-1],
-    [1,1],
-    [1,-1],
-    [-1,1],
-    [-1,-1],
-    [1,1],
-    [1,-1],
-    [-1,1],
-    [-1,-1],
-    [1,1],
-    [1,-1],
-    [-1,1],
-    [-1,-1],
-    [1,1],
-    [1,-1],
-    [-1,1],
-    [-1,-1],
-    [1,1],
-    [1,-1],
-    [-1,1],
     [-1,-1]])
 
-Z = np.array([1,-1,-1,-1, 1,-1,-1,-1, 1,-1,-1,-1,1,-1,-1,-1,1,-1,-1,-1,1,-1,-1,-1])
+Z = np.array([[1,1],[-1,1],[-1,1],[-1,-1]])
 
-S = [1]
+S = []
 
-funcArray = ["escalonada"]
+funcArray = ["sigmoid"] # sigmoid anda pero al reves
 
 model = Model(X, Z, S, funcArray)
-
-print(model.train())
+for i in range(0, 250):
+    y = model.train()
+print(y)
