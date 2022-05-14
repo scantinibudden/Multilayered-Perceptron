@@ -1,11 +1,9 @@
 # ========================= INCLUDES =========================
 
 import numpy as np
-# import matplotlib.pyplot as plt
-# import pandas as pd
 
 class Model():
-    def __init__(self, X, Z, S, activationFuncArray = [], learningRate = 0.1, maxIter = 100):
+    def __init__(self, X, Z, S, activationFuncArray = [], learningRate = 0.1):
     # ========================= VARS =======================
 
         self.X = X                                                      # input
@@ -16,7 +14,6 @@ class Model():
         self.layers = len(S)                                            # number of layers
         self.W = self.createRandomWeights()                             # array of weight matrices
         self.learningRate = learningRate                                # learning rate
-        self.iterations = 0                                             # number of iterations
         if (activationFuncArray == []):                                 # default funcArray uses sigmoid for every layer
             activationFuncArray = ["sigmoid"]*len(S)                    # set default activation array
         self.activationFuncArray = activationFuncArray                  # activation function for each layers
@@ -24,8 +21,7 @@ class Model():
             "sigmoid" : self.sigmoid,
             "tahn" : self.tanh,
             "relu" : self.relu,
-            "softmax" : self.softmax,
-            "escalonada" : self.escalonada
+            "step" : self.step
         }
         
         
@@ -40,7 +36,7 @@ class Model():
             Y.append(self.addBias(T))                                   # add bias to the input
             T, dT = func(np.dot(Y[k-1], self.W[k-1]))                   # calculate the output of the layer
             dY.append(dT)                                               # save the derivative of the output
-        Y.append(T)                                                     # add the output of the last layer 
+        Y.append(T)                                                     # add the output of the last layer
         return Y, dY                                                    # return the output of each layer
 
 #a = np.empty(n)
@@ -54,6 +50,7 @@ class Model():
             j = self.layers - k
             dW[j-1] = self.learningRate*np.dot(np.transpose(np.reshape(Y[j-1], (1,Y[j-1].shape[0]))), D[j])         # dW is the change in the weight matrix
             E = np.dot(D[j], np.transpose(self.W[j-1]))                                                             # E is the error of the next layer = dW * dY
+            D[j-1] = np.multiply(self.subBias(E), dY[j])
         return dW                                                                                                   # return the change in the weight matrix
     
     def train(self):
@@ -65,47 +62,44 @@ class Model():
             self.adaptation(dW)
         return ans
         
-            
+    def predict(self, X):
+        Y = []
+        for h in range(len(X)):
+            Y.append(self.feedForward(X[h])[0][self.layers - 1])
+        return Y
     
     # ========================= ACTIVATION FUNCTIONS AND THEIR DERIVATIVES =========================
     # EXAMPLE: x = sigmoid(something) => x[0] is the output and x[1] is the derivative
 
     # sigmoid activation function
-    def sigmoid(self, x):                                    
-        s=1/(1+np.exp(x))
-        ds=np.multiply(s, (1-s))
-        return s,ds
+    def sigmoid(self, x):        
+        t = 1 / (1 + np.exp(-x))
+        dt = np.multiply(t, 1 - t)
+        return t, dt
 
     # tanh activation function
-    def tanh(self, x):                                        
-        t=(np.exp(x)-np.exp(-x))/(np.exp(x)+np.exp(-x))
-        dt=1-t**2
-        return t,dt
+    def tanh(self, x):
+        t = np.tanh(x)
+        dt = 1 - np.power(t, 2)
+        return t, dt
 
     # relu activation function
-    def relu(self, x):                                       
-        t = [max(0, value) for value in x]
-        dt = [1 if value > 0 else 0 for value in x]
-        t = np.array(t, dtype = float)
-        dt = np.array(dt, dtype = float)
-        return t,dt
+    def relu(self, x):
+        t = np.maximum(0, x)
+        dt = np.where(x > 0, 1, 0)
+        return t, dt
 
-    # softmax activation function
-    def softmax(self, x):                                     
-        softmax = np.exp(x) / np.sum(np.exp(x))
-        softmax = np.reshape(softmax, (1, -1))
-        d_softmax = np.multiply(softmax, np.dot(np.identity(softmax.size) - softmax.transpose(), softmax))
-        return softmax,d_softmax
-
-    def escalonada(self, x):
-        sign = np.sign(x)
-        return sign, np.ones(sign.shape)
+    # binary step activation function
+    def step(self, x):
+        t = np.sign(x)
+        dt = np.ones(t.shape)
+        return t, dt
             
     # ========================= AUXILIARY =========================
 
     # adaptation function
     def adaptation(self, dW): 
-        for k in range(1, self.layers):       #k es la layer
+        for k in range(1, self.layers):
             self.W[k-1] = self.W[k-1] + dW[k-1]
 
     # estimation function
@@ -115,7 +109,7 @@ class Model():
 
     # add bias to the input
     def addBias(self, x):
-        return np.append(x, 1)
+        return np.append(np.array(x), 1)
 
     # remove bias from the input
     def subBias(self,Y):
@@ -132,19 +126,3 @@ class Model():
             layerW = self.generateWeights(self.S[i] + 1, self.S[i + 1])
             w.append(layerW)
         return w
-
-X = np.array([[1,1],
-    [1,-1],
-    [-1,1],
-    [-1,-1]])
-
-Z = np.array([[1,1],[-1,1],[-1,1],[-1,-1]])
-
-S = []
-
-funcArray = ["sigmoid"] # sigmoid anda pero al reves
-
-model = Model(X, Z, S, funcArray)
-for i in range(0, 250):
-    y = model.train()
-print(y)
