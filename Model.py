@@ -3,14 +3,9 @@
 import numpy as np
 
 class Model():
-    def __init__(self, X, Z, S, activationFuncArray = [], learningRate = 0.1):
+    def __init__(self, S, activationFuncArray = [], learningRate = 0.1):
     # ========================= VARS =======================
-
-        self.X = X                                                      # input
-        self.Z = Z                                                      # expected output
         self.S = S                                                      # array with number of neurons per inner layer
-        self.S.insert(0, X.shape[1])
-        self.S.append(Z.shape[1])
         self.layers = len(S)                                            # number of layers
         self.W = self.createRandomWeights()                             # array of weight matrices
         self.learningRate = learningRate                                # learning rate
@@ -40,9 +35,9 @@ class Model():
         return Y, dY                                                    # return the output of each layer
 
 #a = np.empty(n)
-    def backPropagation(self, Y, dY, h):                                                                            # Y are the activation levels and Z are the desired output
+    def backPropagation(self, Y, dY, Z, h):                                                                            # Y are the activation levels and Z are the desired output
         dW = [None] * self.layers                                                                                   # delta W is the change in the weight matrix
-        E = np.array(self.Z[h] - Y[self.layers - 1])                                                                # error is the difference between the desired output and the output of the last layer
+        E = np.array(Z[h] - Y[self.layers - 1])                                                                # error is the difference between the desired output and the output of the last layer
         D = [None] * self.layers                                                                                    # initialization of D as an empty array
 
         D[self.layers-1] = np.multiply(E, dY[self.layers - 1])                                                                  # dY is the derivative of the output of L-1 layer, and D[layers-1] is the product of E and dY
@@ -53,12 +48,12 @@ class Model():
             D[j-1] = np.multiply(self.subBias(E), dY[j])
         return dW                                                                                                   # return the change in the weight matrix
     
-    def train(self):
+    def train(self, X, Z):
         ans = []
-        for h in range(len(self.X)):
-            Y, dY = self.feedForward(self.X[h])                         # get the output of each layer
+        for h in range(len(X)):
+            Y, dY = self.feedForward(X[h])                         # get the output of each layer
             ans.append(np.array(Y[self.layers - 1]))                              # save the output of the last layer
-            dW = self.backPropagation(Y, dY, h)
+            dW = self.backPropagation(Y, dY, Z, h)
             self.adaptation(dW)
         return ans
         
