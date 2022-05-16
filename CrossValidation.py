@@ -13,7 +13,7 @@ class CrossValidation():
         self.funcArray = funcArray
         self.iters = iters
         self.epoch = epoch
-        
+
     # ================ FUNCTIONS ========================
     def split(self):
         index = np.random.choice(self.indexes, int(len(self.indexes)*self.percentage), replace = False)
@@ -23,16 +23,14 @@ class CrossValidation():
         y_train = [self.Y[i] for i in index]
         y_test = [self.Y[i] for i in not_index]
         return x_train, x_test, y_train, y_test
-        
+
     def test(self):
         accuracies = []
         assertPerc = []
-        
         for i in range(self.iters):
-            
             x_train, x_test, y_train, y_test = self.split()
+            model = Model(self.S, self.funcArray, self.learningRate)
             for j in range(self.epoch):
-                model = Model(self.S, self.funcArray, self.learningRate)
                 y = model.train(x_train, y_train)
             y_pred = model.predict(x_test)
             acc = self.accuracy(y_pred, y_test)

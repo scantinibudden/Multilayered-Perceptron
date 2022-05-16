@@ -24,7 +24,7 @@ electric_Y = np.genfromtxt("data/tp1_ej2_training.csv", delimiter=",", dtype=flo
 # funcArray = []
 # lr =
 # iters =
-# epoch = 
+# epoch =
 
 # validation = CrossValidation(X, Z, perc, S, funcArray, lr, iters, epoch)
 #==================================
@@ -32,9 +32,13 @@ expName = "test recontra juguete"
 X = np.array([[1,1],
     [1,-1],
     [-1,1],
+    [-1,-1],
+    [1,1],
+    [1,-1],
+    [-1,1],
     [-1,-1]])
 
-Z = np.array([[1,1],[-1,1],[-1,1],[-1,-1]])
+Z = np.array([[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],[-1,-1]])
 
 splitPerc = 0.8
 
@@ -42,7 +46,7 @@ S = [2, 2]
 
 funcArray = ["step"]
 
-lr = 0.8
+lr = 0.2
 iters = 10
 epochs = 10
 
@@ -53,7 +57,7 @@ for i in range(1, 10):
     accuracy, assertRatio = experimento.test()
     expResults= ff.stringify([lr, splitPerc, iters, epochs, accuracy, assertRatio, S, funcArray])
     experiments.append(expResults)
-    
+
 ff.store(expName, experiments)
 
 #header_names = ["lr", "splitPercentaje", "iter", "epoch", "accuracy", "assertPerc", "layers", "activationFunctions"]
@@ -77,15 +81,15 @@ ff.store(expName, experiments)
 #     perc = np.random.random(1)
 #     validation = CrossValidation(X, Z, perc, funcArray, lr, 500, epoch)
 #     assertP, accuracy = validation.test()
-    
+
 #     test = {
-#         "learningRate"  : lr, 
-#         "splitPercentage"  : perc, 
-#         "iter"  : 500, 
-#         "epochs"  : epoch, 
-#         "accuracy"  : accuracy, 
-#         "assertPercentage"  : assertP, 
-#         "layers"  : S, 
+#         "learningRate"  : lr,
+#         "splitPercentage"  : perc,
+#         "iter"  : 500,
+#         "epochs"  : epoch,
+#         "accuracy"  : accuracy,
+#         "assertPercentage"  : assertP,
+#         "layers"  : S,
 #         "activationFunctions"  : funcArray}
 #     tests.append(test)
 
@@ -93,6 +97,6 @@ ff.store(expName, experiments)
 # lrs = []
 # for i in range(0, len(tests)):
 #     lrs.append(tests[i]["learningRate"])
-    
+
 # a = np.asarray([ [1,2,3], [4,5,6], [7,8,9] ])
 # np.savetxt("foo.csv", a, delimiter=",")
