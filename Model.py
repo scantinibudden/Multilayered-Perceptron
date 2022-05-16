@@ -60,7 +60,9 @@ class Model():
     def predict(self, X):
         Y = []
         for h in range(len(X)):
-            Y.append(self.feedForward(X[h])[0][self.layers - 1])
+            y, dy = self.feedForward(X[h])
+            y = np.array(y[self.layers - 1][0])[0]
+            Y.append(y)
         return Y
     
     # ========================= ACTIVATION FUNCTIONS AND THEIR DERIVATIVES =========================

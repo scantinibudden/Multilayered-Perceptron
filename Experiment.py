@@ -8,12 +8,12 @@ import FileFunctions as ff
 
 # -----DATA FOR CANCER DIAGNOSIS PREDICTION-----
 # In cancer_Y 1 means 'M' and 0 means 'B'
-cancer_X = np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=float)[:, 1:]
-cancer_Y = np.where(np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=str)[:, 0:1] == 'M', 1., 0.)[:, :1]
+#cancer_X = np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=float)[:, 1:]
+#cancer_Y = np.where(np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=str)[:, 0:1] == 'M', 1., 0.)[:, :1]
 
 # -----DATA FOR ELECTRIC CONSUMPTION ESTIMATION-----
-electric_X = np.genfromtxt("data/tp1_ej2_training.csv", delimiter=",", dtype=float)[:, :-2]
-electric_Y = np.genfromtxt("data/tp1_ej2_training.csv", delimiter=",", dtype=float)[:, -2:]
+#electric_X = np.genfromtxt("data/tp1_ej2_training.csv", delimiter=",", dtype=float)[:, :-2]
+#electric_Y = np.genfromtxt("data/tp1_ej2_training.csv", delimiter=",", dtype=float)[:, -2:]
 
 # ================ EJEMPLO DE JUGUETE (calvo) ========================
 
@@ -36,23 +36,40 @@ X = np.array([[1,1],
     [1,1],
     [1,-1],
     [-1,1],
+    [-1,-1],
+    [1,1],
+    [1,-1],
+    [-1,1],
+    [-1,-1],
+    [1,1],
+    [1,-1],
+    [-1,1],
+    [-1,-1],
+    [1,1],
+    [1,-1],
+    [-1,1],
+    [-1,-1],
+    [1,1],
+    [1,-1],
+    [-1,1],
     [-1,-1]])
 
-Z = np.array([[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],[-1,-1]])
+Z = np.array([[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],
+              [-1,-1],[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],[-1,-1]])
 
 splitPerc = 0.8
 
-S = [2, 2]
+S = [2, 2, 2, 2]
 
-funcArray = ["step"]
+funcArray = ["step", "step", "step"]
 
+iters = 20
+epochs = 250
 lr = 0.2
-iters = 10
-epochs = 10
 
 experiments = []
-for i in range(1, 10):
-    lr = 1/i
+for i in range(1, 2):
+
     experimento = CrossValidation(X, Z, splitPerc, S, funcArray, lr, iters, epochs)
     accuracy, assertRatio = experimento.test()
     expResults= ff.stringify([lr, splitPerc, iters, epochs, accuracy, assertRatio, S, funcArray])
