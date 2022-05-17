@@ -45,7 +45,7 @@ class Model():
             j = self.layers - k
             dW[j-1] = self.learningRate*np.dot(np.transpose(np.reshape(Y[j-1], (1,Y[j-1].shape[0]))), D[j])         # dW is the change in the weight matrix
             E = np.dot(D[j], np.transpose(self.W[j-1]))                                                             # E is the error of the next layer = dW * dY
-            D[j-1] = np.multiply(self.subBias(E), dY[j])
+            D[j-1] = np.multiply(self.subBias(E), dY[j-1])
         return dW                                                                                                   # return the change in the weight matrix
     
     def train(self, X, Z):
