@@ -8,26 +8,33 @@ import FileFunctions as ff
 
 # -----DATA FOR CANCER DIAGNOSIS PREDICTION-----
 # In cancer_Y 1 means 'M' and 0 means 'B'
-#cancer_X = np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=float)[:, 1:]
-#cancer_Y = np.where(np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=str)[:, 0:1] == 'M', 1., 0.)[:, :1]
+cancer_X = np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=float)[:, 1:]
+cancer_Y = np.where(np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=str)[:, 0:1] == 'M', 1., 0.)[:, :1]
 
 # -----DATA FOR ELECTRIC CONSUMPTION ESTIMATION-----
-#electric_X = np.genfromtxt("data/tp1_ej2_training.csv", delimiter=",", dtype=float)[:, :-2]
-#electric_Y = np.genfromtxt("data/tp1_ej2_training.csv", delimiter=",", dtype=float)[:, -2:]
+electric_X = np.genfromtxt("data/tp1_ej2_training.csv", delimiter=",", dtype=float)[:, :-2]
+electric_Y = np.genfromtxt("data/tp1_ej2_training.csv", delimiter=",", dtype=float)[:, -2:]
 
 # ================ EJEMPLO DE JUGUETE (calvo) ========================
 
-# X = cancer_X
-# Z = cancer_Y
-# perc = 0.8
-# S = []
-# funcArray = []
-# lr =
-# iters =
-# epoch =
+expName = "test_cancer"
+experiments = []
+X = cancer_X
+Z = cancer_Y
+perc = 0.8
+S = [10, 2, 3, 5, 2, 1]
+funcArray = ["step", "step", "step", "step", "step"]
+lr = 0.2
+iters = 5
+epochs = 250
 
-# validation = CrossValidation(X, Z, perc, S, funcArray, lr, iters, epoch)
+validation = CrossValidation(X, Z, perc, S, funcArray, lr, iters, epochs)
+accuracy, assertRatio = validation.test()
+expResults= ff.stringify([lr, perc, iters, epochs, accuracy, assertRatio, S, funcArray])
+experiments.append(expResults)
+ff.store(expName, experiments)
 #==================================
+'''
 expName = "test recontra juguete"
 X = np.array([[1,1],
     [1,-1],
@@ -54,21 +61,21 @@ X = np.array([[1,1],
     [-1,1],
     [-1,-1]])
 
-Z = np.array([[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],
-              [-1,-1],[1,1],[-1,1],[-1,1],[-1,-1],[1,1],[-1,1],[-1,1],[-1,-1]])
+Z = np.array([[1,1,-1],[-1,1,1],[-1,1,1],[-1,-1,-1],[1,1,-1],[-1,1,1],[-1,1,1],[-1,-1,-1],[1,1,-1],[-1,1,1],[-1,1,1],
+              [-1,-1,-1],[1,1,-1],[-1,1,1],[-1,1,1],[-1,-1,-1],[1,1,-1],[-1,1,1],[-1,1,1],[-1,-1,-1],[1,1,-1],[-1,1,1],[-1,1,1],[-1,-1,-1]])
 
 splitPerc = 0.8
 
-S = [2, 5, 3, 2]
+S = [2, 4, 3]
 
-funcArray = ["step", "step", "step"]
+funcArray = ["step", "step"]
 
 iters = 20
-epochs = 250
+epochs = 150
 lr = 0.2
 
 experiments = []
-for i in range(1, 2):
+for i in range(1, 10):
 
     experimento = CrossValidation(X, Z, splitPerc, S, funcArray, lr, iters, epochs)
     accuracy, assertRatio = experimento.test()
@@ -79,7 +86,7 @@ ff.store(expName, experiments)
 
 #header_names = ["lr", "splitPercentaje", "iter", "epoch", "accuracy", "assertPerc", "layers", "activationFunctions"]
 
-
+'''
 # ============================== EXP RANDOMS =======================================
 
 # exp_name = "exp_random"
