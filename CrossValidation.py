@@ -1,6 +1,9 @@
 from Model import Model
 import numpy as np
 
+import os
+clearConsole = lambda: os.system('clear')
+
 class CrossValidation():
     # ================ CONSTRUCTOR ========================
     def __init__(self, X, Y, trainPercentage, S, funcArray = [], learningRate = 0.1, iters = 100, epoch = 250):
@@ -27,11 +30,16 @@ class CrossValidation():
     def test(self):
         accuracies = []
         assertPerc = []
+        iterXepoch = (self.iters) * (self.epoch)
+        it = 0
         for i in range(self.iters):
             x_train, x_test, y_train, y_test = self.split()
             model = Model(self.S, self.funcArray, self.learningRate)
             for j in range(self.epoch):
                 y = model.train(x_train, y_train)
+                it += 1
+                # clearConsole()
+                # print(f"Iter:{i}/{self.iters} - Epoch: {j}/{self.epoch} - I*E: {(it/iterXepoch)}")
             y_pred = model.predict(x_test)
             acc = self.accuracy(y_pred, y_test)
             accuracies.append(acc)
@@ -45,5 +53,5 @@ class CrossValidation():
 
     def assertPercentaje(self, y_pred, y_check):
         res = np.abs(np.array(y_check) - np.array(y_pred))
-        res = np.where(res == 0, 1, 0)
+        res = np.where(res < 0.5, 1, 0)
         return res.sum(axis=0)/len(y_pred)

@@ -19,7 +19,6 @@ class Model():
             "step" : self.step
         }
         
-        
     # ========================= FUNCTIONS   =========================
     
     def feedForward(self, Xh):                                          # Xh is what we're trying to predict
@@ -31,16 +30,15 @@ class Model():
             Y.append(self.addBias(T))                                   # add bias to the input
             T, dT = func(np.dot(Y[k-1], self.W[k-1]))                   # calculate the output of the layer
             dY.append(dT)                                               # save the derivative of the output
-        Y.append(T)                                                     # add the output of the last layer
+        Y.append(np.array(T[0]))                                        # add the output of the last layer
         return Y, dY                                                    # return the output of each layer
 
 #a = np.empty(n)
-    def backPropagation(self, Y, dY, Z, h):                                                                            # Y are the activation levels and Z are the desired output
+    def backPropagation(self, Y, dY, Z, h):                                                                         # Y are the activation levels and Z are the desired output
         dW = [None] * self.layers                                                                                   # delta W is the change in the weight matrix
-        E = np.array(Z[h] - Y[self.layers - 1])                                                                # error is the difference between the desired output and the output of the last layer
+        E = np.array(Z[h] - Y[self.layers - 1])                                                                     # error is the difference between the desired output and the output of the last layer
         D = [None] * self.layers                                                                                    # initialization of D as an empty array
-
-        D[self.layers-1] = np.multiply(E, dY[self.layers - 1])                                                                  # dY is the derivative of the output of L-1 layer, and D[layers-1] is the product of E and dY
+        D[self.layers-1] = np.multiply(E, dY[self.layers - 1])                                                      # dY is the derivative of the output of L-1 layer, and D[layers-1] is the product of E and dY
         for k in range(1, self.layers):                                                                             # k is the current layer index
             j = self.layers - k
             dW[j-1] = self.learningRate*np.dot(np.transpose(np.reshape(Y[j-1], (1,Y[j-1].shape[0]))), D[j])         # dW is the change in the weight matrix
@@ -51,19 +49,18 @@ class Model():
     def train(self, X, Z):
         ans = []
         for h in range(len(X)):
-            Y, dY = self.feedForward(X[h])                         # get the output of each layer
-            ans.append(np.array(Y[self.layers - 1]))                              # save the output of the last layer
+            Y, dY = self.feedForward(X[h])                                      # get the output of each layer
+            ans.append(np.array(Y[-1]))                                         # save the output of the last layer
             dW = self.backPropagation(Y, dY, Z, h)
             self.adaptation(dW)
         return ans
         
     def predict(self, X):
-        Y = []
+        ans = []
         for h in range(len(X)):
-            y, dy = self.feedForward(X[h])
-            y = np.array(y[self.layers - 1][0])[0]
-            Y.append(y)
-        return Y
+            Y, dY = self.feedForward(X[h])                                      # get the output of each layer
+            ans.append(np.array(Y[-1]))                                         # save the output of the last layer
+        return ans
     
     # ========================= ACTIVATION FUNCTIONS AND THEIR DERIVATIVES =========================
     # EXAMPLE: x = sigmoid(something) => x[0] is the output and x[1] is the derivative
@@ -72,7 +69,7 @@ class Model():
     def sigmoid(self, x):        
         t = 1 / (1 + np.exp(-x))
         dt = np.multiply(t, 1 - t)
-        return t, dt
+        return t, np.array(dt)
 
     # tanh activation function
     def tanh(self, x):
