@@ -29,7 +29,7 @@ class CrossValidation():
 
     def test(self):
         accuracies = []
-        assertPerc = []
+        meanErrors = []
         for i in range(self.iters):
             x_train, x_test, y_train, y_test = self.split()
             model = Model(self.S, self.funcArray, self.learningRate)
@@ -38,15 +38,15 @@ class CrossValidation():
             y_pred = model.predict(x_test)
             acc = self.accuracy(y_pred, y_test)
             accuracies.append(acc)
-            assPerc = self.assertPercentaje(y_pred, y_test)
-            assertPerc.append(assPerc)
-        return np.mean(np.array(accuracies), axis=0), np.mean(np.array(assertPerc), axis=0)
+            meanError = self.assertPercentaje(y_pred, y_test)
+            meanErrors.append(meanError)
+        return np.mean(np.array(accuracies), axis=0), np.mean(np.array(meanErrors), axis=0)
 
     def accuracy(self, y_pred, y_check):
         res = np.abs(np.array(y_check) - np.array(y_pred))
+        res = np.where(res < 0.1, 1, 0)
         return res.sum(axis=0)/len(y_pred)
 
-    def assertPercentaje(self, y_pred, y_check):
+    def meanError(self, y_pred, y_check):
         res = np.abs(np.array(y_check) - np.array(y_pred))
-        res = np.where(res < 0.5, 1, 0)
         return res.sum(axis=0)/len(y_pred)

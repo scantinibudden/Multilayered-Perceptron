@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import sys
 
-header_names = ["lr", "splitPercentaje", "iter", "epoch", "error", "accuracy", "layers", "activationFunctions"]
+header_names = ["lr", "splitPercentaje", "iter", "epoch", "accuracy", "meanError", "layers", "activationFunctions"]
 
 cancer_df = pd.read_csv("results/results_hola_1.txt", names=header_names)
 display(cancer_df)
