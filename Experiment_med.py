@@ -17,18 +17,23 @@ def main(argv):
 
     # -----VARIBLES-----
     datasetName = "cancer-"
-    S = [10, 6, 5, 1]
+    S = [10, 6, 1]
     funcArray = []
     learningRate = 0.2
-    iters = 5
-    epochs = 100
+    iters = 1
     percentage = 0.9
-    epochs = 100
+    epochs = 5000
     X = cancer_X
     Y = cancer_Y
+    X = (X - np.min(X, axis=0))/(np.max(X, axis=0) - np.min(X, axis=0))
 
+    val = CrossValidation(X, Y, percentage, S, funcArray, learningRate, iters, epochs)
+    acc, asserts = val.test()
+    print(acc, asserts)
+
+'''
     # ================ EXP LEARNING RATE ========================
-    if (int(sys.argv[1]) == 1 or sys.argv[1] == 'ALL' or int(sys.argv[1]) >= 1):
+    if (True or int(sys.argv[1]) == 1 or sys.argv[1] == 'ALL' or int(sys.argv[1]) >= 1):
         expName = datasetName + "exp_lr"
         experiments = []
 
@@ -96,5 +101,45 @@ def main(argv):
 
         ff.store(expName, experiments)
 
+'''
 if __name__ == "__main__":
     main(sys.argv)
+'''
+X = np.loadtxt("data/letras.txt")
+X = X.reshape((26,25))*2 - 1
+
+def getbin(n, s=['']):
+    if n > 0:
+        return [
+            *getbin(n - 1, [i + '0' for i in s]),
+            *getbin(n - 1, [j + '1' for j in s])
+        ]
+    return s
+
+def toArray(s):
+    res = []
+    for elem in s:
+        lst = []
+        for letter in elem:
+            lst.append(int(letter))
+        res.append(lst)
+    return res
+
+Z = toArray(getbin(5))[:26]
+
+S = [25, 5]
+fa = ["step"]
+model = Model(S, fa)
+
+def duplicate(X):
+    return np.array([x for pair in zip(X,X) for x in pair])
+
+X = duplicate(duplicate(duplicate(X)))
+Z = duplicate(duplicate(duplicate(Z)))
+
+
+val = CrossValidation(X, Z, 0.8, S, fa, 0.2, 1, 250)
+acc, asserts = val.test()
+
+print(acc, asserts)
+'''

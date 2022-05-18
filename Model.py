@@ -14,7 +14,7 @@ class Model():
         self.activationFuncArray = activationFuncArray                  # activation function for each layers
         self.activationFuncDicc = {
             "sigmoid" : self.sigmoid,
-            "tahn" : self.tanh,
+            "tanh" : self.tanh,
             "relu" : self.relu,
             "step" : self.step
         }
@@ -57,7 +57,7 @@ class Model():
         ans = []
         for h in range(len(X)):
             Y, dY = self.feedForward(X[h])                                      # get the output of each layer
-            ans.append(np.array(Y[-1]))                                         # save the output of the last layer
+            ans.append(np.array(Y[-1][0]))                                         # save the output of the last layer
         return ans
     
     # ========================= ACTIVATION FUNCTIONS AND THEIR DERIVATIVES =========================
@@ -84,6 +84,7 @@ class Model():
     # binary step activation function
     def step(self, x):
         t = np.sign(x)
+        t = np.where(x > 0, 1, 0)
         dt = np.ones(t.shape)
         return t, dt
             
