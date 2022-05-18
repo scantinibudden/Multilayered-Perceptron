@@ -28,7 +28,7 @@ Y = cancer_Y
 
 def main(argv):
     # ================ EXP LEARNING RATE ========================
-    if (int(sys.argv[1]) == 1 or sys.argv[1]== 'ALL' or int(sys.argv[1]) >= 1):
+    if (int(sys.argv[1]) == 1 or sys.argv[1] == 'ALL' or int(sys.argv[1]) >= 1):
         expName = datasetName + "exp_lr"
         experiments = []
 
@@ -45,7 +45,7 @@ def main(argv):
 
     # ================ EXP: CAPAS Y NEURONAS ========================
 
-    if (int(sys.argv[2]) == 1 or sys.argv[1]== 'ALL' or int(sys.argv[1]) >=2 ):
+    if (int(sys.argv[2]) == 1 or sys.argv[1] == 'ALL' or int(sys.argv[1]) >= 2):
         expName = datasetName + "exp_cn"
         experiments = []
 
@@ -63,7 +63,7 @@ def main(argv):
 
     # ================ EXP: FUNCIONES DE ACTIVACION ========================
 
-    if (int(sys.argv[3]) == 1 or sys.argv[1]== 'ALL' or int(sys.argv[1]) >=3 ):
+    if (int(sys.argv[3]) == 1 or sys.argv[1] == 'ALL' or int(sys.argv[1]) >= 3):
         expName = datasetName + "exp_fa"
         experiments = []
 
@@ -78,7 +78,7 @@ def main(argv):
             
     # ================ EXP: EPOCAS =================
 
-    if (int(sys.argv[4]) == 1 or sys.argv[1]== 'ALL' or int(sys.argv[1]) >=4 ):
+    if (int(sys.argv[4]) == 1 or sys.argv[1] == 'ALL' or int(sys.argv[1]) >= 4):
             
         expName = datasetName + "exp_ep"
         experiments = []

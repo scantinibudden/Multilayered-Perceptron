@@ -33,17 +33,15 @@ class Model():
         Y.append(np.array(T[0]))                                        # add the output of the last layer
         return Y, dY                                                    # return the output of each layer
 
-#a = np.empty(n)
     def backPropagation(self, Y, dY, Z, h):                                                                         # Y are the activation levels and Z are the desired output
         dW = [None] * self.layers                                                                                   # delta W is the change in the weight matrix
         E = np.array(Z[h] - Y[self.layers - 1])                                                                     # error is the difference between the desired output and the output of the last layer
         D = [None] * self.layers                                                                                    # initialization of D as an empty array
         D[self.layers-1] = np.multiply(E, dY[self.layers - 1])                                                      # dY is the derivative of the output of L-1 layer, and D[layers-1] is the product of E and dY
-        for k in range(1, self.layers):                                                                             # k is the current layer index
-            j = self.layers - k
-            dW[j-1] = self.learningRate*np.dot(np.transpose(np.reshape(Y[j-1], (1,Y[j-1].shape[0]))), D[j])         # dW is the change in the weight matrix
-            E = np.dot(D[j], np.transpose(self.W[j-1]))                                                             # E is the error of the next layer = dW * dY
-            D[j-1] = np.multiply(self.subBias(E), dY[j-1])
+        for k in np.flip(range(1, self.layers)):
+            dW[k-1] = self.learningRate*np.dot(np.transpose(np.reshape(Y[k-1], (1,Y[k-1].shape[0]))), D[k])         # dW is the change in the weight matrix
+            E = np.dot(D[k], np.transpose(self.W[k-1]))                                                             # E is the error of the next layer = dW * dY
+            D[k-1] = np.multiply(self.subBias(E), dY[k-1])
         return dW                                                                                                   # return the change in the weight matrix
     
     def train(self, X, Z):
