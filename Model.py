@@ -29,7 +29,7 @@ class Model():
             func = self.activationFuncDicc[self.activationFuncArray[k-1]] # get activation function
             Y.append(self.addBias(T))                                   # add bias to the input
             T, dT = func(np.dot(Y[k-1], self.W[k-1]))                   # calculate the output of the layer
-            dY.append(dT)                                               # save the derivative of the output
+            dY.append(np.array(dT))                                               # save the derivative of the output
         Y.append(np.array(T[0]))                                        # add the output of the last layer
         return Y, dY                                                    # return the output of each layer
 
