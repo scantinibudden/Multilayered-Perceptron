@@ -13,20 +13,20 @@ clearConsole = lambda: os.system('clear')
 cancer_X = np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=float)[:, 1:]
 cancer_Y = np.where(np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dtype=str)[:, 0:1] == 'M', 1, 0)[:, :1]
 
-
-# -----GLOBAL VARIBLES-----
-datasetName = "cancer-"
-S = [10, 6, 5, 1]
-funcArray = []
-learningRate = 0.2
-iters = 5
-epochs = 100
-percentage = 0.9
-epochs = 100
-X = cancer_X
-Y = cancer_Y
-
 def main(argv):
+
+    # -----VARIBLES-----
+    datasetName = "cancer-"
+    S = [10, 6, 5, 1]
+    funcArray = []
+    learningRate = 0.2
+    iters = 5
+    epochs = 100
+    percentage = 0.9
+    epochs = 100
+    X = cancer_X
+    Y = cancer_Y
+
     # ================ EXP LEARNING RATE ========================
     if (int(sys.argv[1]) == 1 or sys.argv[1] == 'ALL' or int(sys.argv[1]) >= 1):
         expName = datasetName + "exp_lr"
@@ -95,3 +95,6 @@ def main(argv):
 
 
         ff.store(expName, experiments)
+
+if __name__ == "__main__":
+    main(sys.argv)
