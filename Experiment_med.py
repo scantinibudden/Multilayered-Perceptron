@@ -34,7 +34,7 @@ def main(argv):
         for i in range(4):                                              # 1-3 capas internas
             S = [None] * (i+2)
             S[0] = X.shape[1]
-            S[-1] = 1
+            S[-1] = Y.shape[1]
             for j in range(5):
                 for k in range(1, i+1):
                     S[k] = np.random.randint(2, 9)

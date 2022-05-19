@@ -38,7 +38,7 @@ class CrossValidation():
             y_pred = model.predict(x_test)
             acc = self.accuracy(y_pred, y_test)
             accuracies.append(acc)
-            meanError = self.assertPercentaje(y_pred, y_test)
+            meanError = self.meanError(y_pred, y_test)
             meanErrors.append(meanError)
         return np.mean(np.array(accuracies), axis=0), np.mean(np.array(meanErrors), axis=0)
 
