@@ -3,7 +3,7 @@
 import numpy as np
 
 class Model():
-    def __init__(self, S, activationFuncArray = [], learningRate = 0.1):
+    def __init__(self, S = [], activationFuncArray = [], learningRate = 0.1):
     # ========================= VARS =======================
         self.S = S                                                      # array with number of neurons per inner layer
         self.layers = len(S)                                            # number of layers
