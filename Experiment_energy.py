@@ -2,8 +2,7 @@ from Model import Model
 from CrossValidation import CrossValidation
 import numpy as np
 import FileFunctions as ff
-import os
-import sys
+
 clearConsole = lambda: os.system('clear')
 
 # ================ DATA GET ========================

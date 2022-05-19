@@ -1,9 +1,6 @@
 from Model import Model
 import numpy as np
 
-import os
-clearConsole = lambda: os.system('clear')
-
 class CrossValidation():
     # ================ CONSTRUCTOR ========================
     def __init__(self, X, Y, trainPercentage, S, funcArray = [], learningRate = 0.1, iters = 100, epoch = 250):
