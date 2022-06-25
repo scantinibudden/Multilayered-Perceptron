@@ -46,11 +46,19 @@ class Model():
     
     def train(self, X, Z):
         ans = []
-        for h in range(len(X)):
-            Y, dY = self.feedForward(X[h])                                      # get the output of each layer
-            ans.append(np.array(Y[-1]))                                         # save the output of the last layer
-            dW = self.backPropagation(Y, dY, Z, h)
-            self.adaptation(dW)
+        meanY, meanDY # declaranding
+        batch_size = 100
+        for h in range(1, len(X)):
+
+            if(h % 100 == 0):
+                meanY, meanDY = self.feedForward(X[h])
+            else:
+                meanY, meanDY += self.feedForward(X[h])                                      # get the output of each layer
+            ans.append(np.array(meanY[-1]))                                         # save the output of the last layer
+            if(h % batch_size == batch_size - 1 or h == len()-1):
+                meanY, meanDY /= (h % batch_size) + 1
+                dW = self.backPropagation(meanY, meanDY, Z, h)
+                self.adaptation(dW)
         return ans
         
     def predict(self, X):
