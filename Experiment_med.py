@@ -1,6 +1,7 @@
 from CrossValidation import CrossValidation
 import numpy as np
 import FileFunctions as ff
+import timeit
 
 # ================ DATA GET ========================
 
@@ -12,10 +13,11 @@ cancer_Y = np.where(np.genfromtxt("data/tp1_ej1_training.csv", delimiter=",", dt
 # -----VARIBLES-----
 datasetName = "cancer"
 funcArray = []                                                      # vacio corre utilizando sigmoide
-learningRates = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
-epochs = range(1000, 3001, 500)                                     # [1000, 1500, 2000, 2500, 3000]
-
-iters = 3
+# learningRates = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
+# epochs = range(1000, 3001, 500)                                     # [1000, 1500, 2000, 2500, 3000]
+lr = 0.05
+epsilon = 0.25
+iters = 1
 percentage = 0.85
 
 X = cancer_X
@@ -24,18 +26,16 @@ X = (X - np.min(X, axis=0))/(np.max(X, axis=0) - np.min(X, axis=0)) #datos norma
 
 expName = datasetName
 experiments = []
-for ep in epochs:
-    for i in range(4):                                              # 1-3 capas internas
-        S = [None] * (i+2)
-        S[0] = X.shape[1]
-        S[-1] = Y.shape[1]
-        for j in range(5):
-            for k in range(1, i+1):
-                S[k] = np.random.randint(2, 9)
-            for lr in learningRates:
-                validation = CrossValidation(X, Y, percentage, S, funcArray, lr, iters, ep)
-                accuracy, meanError = validation.test()
-                expResults = ff.stringify([lr, percentage, iters, ep, accuracy, meanError, S, funcArray])
-                experiments.append(expResults)
+
+S = [ X.shape[1] , 5,Y.shape[1]]
+
+batches = [1,2,3]
+for batch_size in batches:
+    start = timeit.default_timer()
+    validation = CrossValidation(X, Y, percentage, S, funcArray, lr, iters, epsilon, batch_size)
+    stop = timeit.default_timer()
+    meanError, epochs = validation.test()
+    expResults = ff.stringify([lr, percentage, iters, epochs, meanError[0], S, funcArray, batch_size, start - stop])
+    experiments.append(expResults)
                 
 ff.store(expName, experiments)

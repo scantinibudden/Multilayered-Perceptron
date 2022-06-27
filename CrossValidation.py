@@ -1,9 +1,10 @@
 from Model import Model
 import numpy as np
+import random
 
 class CrossValidation():
     # ================ CONSTRUCTOR ========================
-    def __init__(self, X, Y, trainPercentage, S, funcArray = [], learningRate = 0.1, iters = 100, epoch = 250):
+    def __init__(self, X, Y, trainPercentage, S, funcArray = [], learningRate = 0.1, iters = 100, epsilon = 0.1, batch_size = 1):
         self.X = X
         self.Y = Y
         self.percentage = trainPercentage
@@ -12,7 +13,8 @@ class CrossValidation():
         self.learningRate  = learningRate
         self.funcArray = funcArray
         self.iters = iters
-        self.epoch = epoch
+        self.epsilon = epsilon
+        self.batch_size = batch_size
 
     # ================ FUNCTIONS ========================
     def split(self):
@@ -25,24 +27,43 @@ class CrossValidation():
         return x_train, x_test, y_train, y_test
 
     def test(self):
-        accuracies = []
         meanErrors = []
+        epochs = []
+        maxDec = 15
         for i in range(self.iters):
             x_train, x_test, y_train, y_test = self.split()
             model = Model(self.S, self.funcArray, self.learningRate)
-            for j in range(self.epoch):
-                model.train(x_train, y_train)
+            #for j in range(self.epoch):
+            epoch = 0
+            batch_size = self.batch_size
+            n=0
             y_pred = model.predict(x_test)
-            acc = self.accuracy(y_pred, y_test)
-            accuracies.append(acc)
-            meanError = self.meanError(y_pred, y_test)
-            meanErrors.append(meanError)
-        return np.mean(np.array(accuracies), axis=0), np.mean(np.array(meanErrors), axis=0)
+            lastMeanError = self.meanError(y_pred, y_test)
+            while(True): # this is the way to emulate a do while in python
+                epoch = epoch +1
+                model.train(x_train, y_train, batch_size)
+                y_pred = model.predict(x_test)
+                meanError = self.meanError(y_pred, y_test)
+                print(f"Epoch: {epoch} with error:{meanError}")
+                if (meanError > lastMeanError):
+                    n +=1
+                else: 
+                    n = 0
+                lastMeanError = meanError
+                if (n == maxDec):
+                    x_train, y_train = self.shuffleBoth(x_train, y_train)
+                    n = 0
+                if (meanError < self.epsilon): break #break on the error
 
-    def accuracy(self, y_pred, y_check):
-        res = np.abs(np.array(y_check) - np.array(y_pred))
-        res = np.where(res < 0.1, 1, 0)
-        return res.sum(axis=0)/len(y_pred)
+            meanErrors.append(meanError)
+            epochs.append(epoch)
+        return np.mean(np.array(meanErrors), axis=0), np.mean(np.array(epochs))
+
+    def shuffleBoth(self,x_train, y_train):
+        temp = list(zip(x_train, y_train))
+        random.shuffle(temp)
+        res1, res2 = zip(*temp)
+        return res1, res2
 
     def meanError(self, y_pred, y_check):
         res = np.abs(np.array(y_check) - np.array(y_pred))

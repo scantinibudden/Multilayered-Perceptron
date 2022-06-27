@@ -33,9 +33,9 @@ class Model():
         Y.append(np.array(T[0]))                                        # add the output of the last layer
         return Y, dY                                                    # return the output of each layer
 
-    def backPropagation(self, Y, dY, Z, h):                                                                         # Y are the activation levels and Z are the desired output
+    def backPropagation(self, Y, dY, dZ):                                                                         # Y are the activation levels and Z are the desired output
         dW = [None] * self.layers                                                                                   # delta W is the change in the weight matrix
-        E = np.array(Z[h] - Y[self.layers - 1])                                                                     # error is the difference between the desired output and the output of the last layer
+        E = np.array(dZ - Y[self.layers - 1])                                                                     # error is the difference between the desired output and the output of the last layer
         D = [None] * self.layers                                                                                    # initialization of D as an empty array
         D[self.layers-1] = np.multiply(E, dY[self.layers - 1])                                                      # dY is the derivative of the output of L-1 layer, and D[layers-1] is the product of E and dY
         for k in np.flip(range(1, self.layers)):
@@ -44,23 +44,44 @@ class Model():
             D[k-1] = np.multiply(self.subBias(E), dY[k-1])
         return dW                                                                                                   # return the change in the weight matrix
     
-    def train(self, X, Z):
-        ans = []
-        meanY, meanDY # declaranding
-        batch_size = 100
-        for h in range(1, len(X)):
 
-            if(h % 100 == 0):
-                meanY, meanDY = self.feedForward(X[h])
-            else:
-                meanY, meanDY += self.feedForward(X[h])                                      # get the output of each layer
-            ans.append(np.array(meanY[-1]))                                         # save the output of the last layer
-            if(h % batch_size == batch_size - 1 or h == len()-1):
-                meanY, meanDY /= (h % batch_size) + 1
-                dW = self.backPropagation(meanY, meanDY, Z, h)
-                self.adaptation(dW)
-        return ans
+
+    def train(self, X, Z, batch_size):
+        for h in range(0,len(X), batch_size):
+
+            for batch_index in range(batch_size):
+                if (h + batch_index >= len(X)): break
+                if (batch_index == 0):
+                    Y, dY = self.feedForward(X[h + batch_index])
+                    dZ = Z[h + batch_index]                                      
+                else:
+                    _Y, _DY = self.feedForward(X[h + batch_index])                                      
+                    Y = Y + _Y
+                    dY = dY + _DY
+                    dZ = dZ + Z[h + batch_index]
+            
+
+            dW = self.backPropagation(Y, dY, dZ)
+            self.adaptation(dW)
+
+
+
+    # def train(self, X, Z, batch_size ):
         
+    #     for h in range(len(X)):
+    #         if (h==0):
+    #             sumY, sumDY = self.feedForward(X[h])
+    #         if ((h % batch_size == 0 and h != 0) or h == (len(X)-1)):
+    #             dW = self.backPropagation(sumY, sumDY, Z, h)
+    #             self.adaptation(dW)
+    #             sumY, sumDY = self.feedForward(X[h])                                      # get the output of each layer
+    #         else:
+    #             _Y, _DY = self.feedForward(X[h])                                      # get the output of each layer
+    #             sumY = sumY + _Y
+    #             sumDY = sumDY + _DY
+            
+
+
     def predict(self, X):
         ans = []
         for h in range(len(X)):
