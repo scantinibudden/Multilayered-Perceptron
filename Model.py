@@ -66,21 +66,6 @@ class Model():
 
 
 
-    # def train(self, X, Z, batch_size ):
-        
-    #     for h in range(len(X)):
-    #         if (h==0):
-    #             sumY, sumDY = self.feedForward(X[h])
-    #         if ((h % batch_size == 0 and h != 0) or h == (len(X)-1)):
-    #             dW = self.backPropagation(sumY, sumDY, Z, h)
-    #             self.adaptation(dW)
-    #             sumY, sumDY = self.feedForward(X[h])                                      # get the output of each layer
-    #         else:
-    #             _Y, _DY = self.feedForward(X[h])                                      # get the output of each layer
-    #             sumY = sumY + _Y
-    #             sumDY = sumDY + _DY
-            
-
 
     def predict(self, X):
         ans = []

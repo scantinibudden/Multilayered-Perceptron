@@ -1,6 +1,7 @@
 from Model import Model
 import numpy as np
 import random
+import timeit
 
 class CrossValidation():
     # ================ CONSTRUCTOR ========================
@@ -29,35 +30,44 @@ class CrossValidation():
     def test(self):
         meanErrors = []
         epochs = []
-        maxDec = 15
+        times = []
+        maxDec = 20
+
         for i in range(self.iters):
+
             x_train, x_test, y_train, y_test = self.split()
             model = Model(self.S, self.funcArray, self.learningRate)
             #for j in range(self.epoch):
             epoch = 0
             batch_size = self.batch_size
             n=0
+
             y_pred = model.predict(x_test)
             lastMeanError = self.meanError(y_pred, y_test)
+            start = timeit.default_timer()
             while(True): # this is the way to emulate a do while in python
                 epoch = epoch +1
                 model.train(x_train, y_train, batch_size)
                 y_pred = model.predict(x_test)
                 meanError = self.meanError(y_pred, y_test)
-                print(f"Epoch: {epoch} with error:{meanError}")
+                print(f"Epoch: {epoch} with error:{meanError} in Iter {i}")
                 if (meanError > lastMeanError):
                     n +=1
                 else: 
                     n = 0
                 lastMeanError = meanError
                 if (n == maxDec):
-                    x_train, y_train = self.shuffleBoth(x_train, y_train)
+                    #x_train, y_train = self.shuffleBoth(x_train, y_train)
                     n = 0
+                if (epoch % 300 == 0): 
+                    x_train, y_train = self.shuffleBoth(x_train, y_train)
+
                 if (meanError < self.epsilon): break #break on the error
 
             meanErrors.append(meanError)
             epochs.append(epoch)
-        return np.mean(np.array(meanErrors), axis=0), np.mean(np.array(epochs))
+            times.append(start - timeit.default_timer())
+        return np.mean(np.array(meanErrors), axis=0), np.mean(np.array(epochs)),  np.mean(np.array(times))
 
     def shuffleBoth(self,x_train, y_train):
         temp = list(zip(x_train, y_train))
