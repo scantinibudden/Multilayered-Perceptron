@@ -18,7 +18,7 @@ Y = cancer_Y
 X = (X - np.min(X, axis=0))/(np.max(X, axis=0) - np.min(X, axis=0)) #datos normalizados
 
 experiments = []
-batch_size =1
+max_epochs =500
 
 
 # EXPERIMENT 1 =====================================
@@ -35,9 +35,9 @@ iters = 3
 percentage = 0.85
 
 for lr in learningRates:
-    validation = CrossValidation(X, Y, percentage, S, funcArray, lr, iters, epsilon, batch_size)
+    validation = CrossValidation(X, Y, percentage, S, funcArray, lr, iters, epsilon, max_epochs)
     meanError, epochs, time = validation.test()
-    expResults = ff.stringify([datasetName,lr, percentage, iters, epochs, meanError[0], S, funcArray, batch_size, time])
+    expResults = ff.stringify([datasetName,lr, percentage, iters, epochs, meanError[0], S, funcArray, max_epochs, time])
     experiments.append(expResults)
     
 
@@ -55,9 +55,9 @@ iters = 3
 percentage = 0.85
 
 for lr in learningRates:
-    validation = CrossValidation(X, Y, percentage, S, funcArray, lr, iters, epsilon, batch_size)
+    validation = CrossValidation(X, Y, percentage, S, funcArray, lr, iters, epsilon, max_epochs)
     meanError, epochs, time = validation.test()
-    expResults = ff.stringify([datasetName, lr, percentage, iters, epochs, meanError[0], S, funcArray, batch_size, time])
+    expResults = ff.stringify([datasetName, lr, percentage, iters, epochs, meanError[0], S, funcArray, max_epochs, time])
     experiments.append(expResults)
 
 #----------------------------------------

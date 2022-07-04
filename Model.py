@@ -46,21 +46,11 @@ class Model():
     
 
 
-    def train(self, X, Z, batch_size):
-        for h in range(0,len(X), batch_size):
+    def train(self, X, Z):
+        for h in range(0,len(X)):
 
-            for batch_index in range(batch_size):
-                if (h + batch_index >= len(X)): break
-                if (batch_index == 0):
-                    Y, dY = self.feedForward(X[h + batch_index])
-                    dZ = Z[h + batch_index]                                      
-                else:
-                    _Y, _DY = self.feedForward(X[h + batch_index])                                      
-                    Y = Y + _Y
-                    dY = dY + _DY
-                    dZ = dZ + Z[h + batch_index]
-            
-
+            Y, dY = self.feedForward(X[h])
+            dZ = Z[h]                                  
             dW = self.backPropagation(Y, dY, dZ)
             self.adaptation(dW)
 

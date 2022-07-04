@@ -5,7 +5,7 @@ import timeit
 
 class CrossValidation():
     # ================ CONSTRUCTOR ========================
-    def __init__(self, X, Y, trainPercentage, S, funcArray = [], learningRate = 0.1, iters = 100, epsilon = 0.1, batch_size = 1):
+    def __init__(self, X, Y, trainPercentage, S, funcArray = [], learningRate = 0.1, iters = 100, epsilon = 0.1, max_epochs = 1):
         self.X = X
         self.Y = Y
         self.percentage = trainPercentage
@@ -15,7 +15,7 @@ class CrossValidation():
         self.funcArray = funcArray
         self.iters = iters
         self.epsilon = epsilon
-        self.batch_size = batch_size
+        self.max_epochs = max_epochs
 
     # ================ FUNCTIONS ========================
     def split(self):
@@ -31,7 +31,7 @@ class CrossValidation():
         meanErrors = []
         epochs = []
         times = []
-        maxDec = 20
+        maxDec = 15
 
         for i in range(self.iters):
 
@@ -39,7 +39,6 @@ class CrossValidation():
             model = Model(self.S, self.funcArray, self.learningRate)
             #for j in range(self.epoch):
             epoch = 0
-            batch_size = self.batch_size
             n=0
 
             y_pred = model.predict(x_test)
@@ -47,7 +46,7 @@ class CrossValidation():
             start = timeit.default_timer()
             while(True): # this is the way to emulate a do while in python
                 epoch = epoch +1
-                model.train(x_train, y_train, batch_size)
+                model.train(x_train, y_train)
                 y_pred = model.predict(x_test)
                 meanError = self.meanError(y_pred, y_test)
                 print(f"Epoch: {epoch} with error:{meanError} in Iter {i}")
@@ -57,12 +56,12 @@ class CrossValidation():
                     n = 0
                 lastMeanError = meanError
                 if (n == maxDec):
-                    #x_train, y_train = self.shuffleBoth(x_train, y_train)
+                    x_train, y_train = self.shuffleBoth(x_train, y_train)
                     n = 0
                 if (epoch % 300 == 0): 
                     x_train, y_train = self.shuffleBoth(x_train, y_train)
 
-                if (meanError < self.epsilon): break #break on the error
+                if (meanError < self.epsilon or self.max_epochs < epoch): break #break on the error
 
             meanErrors.append(meanError)
             epochs.append(epoch)
