@@ -1,7 +1,7 @@
 import numpy as np
 import glob
 
-file_name_template = "results/results_#exp_name#_#run_number#.txt"
+file_name_template = "results-energy/results_#exp_name#_#run_number#.txt"
 
 def store(exp_name, df):
     file_name = file_name_template.replace("#exp_name#", exp_name)
@@ -9,6 +9,7 @@ def store(exp_name, df):
     file_name = file_name.replace("#run_number#", run_number)
     with open(file_name, 'wb') as file:
         np.savetxt(file, df, delimiter = ",", fmt='%s')
+    return run_number
 
 def getExpRunNumber(file_name):
     file_name_pattern = file_name.replace("#run_number#", "*")

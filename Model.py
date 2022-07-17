@@ -3,12 +3,13 @@
 import numpy as np
 
 class Model():
-    def __init__(self, S = [], activationFuncArray = [], learningRate = 0.1):
+    def __init__(self, S = [], activationFuncArray = [], learningRate = 0.1, maxIter = 500):
     # ========================= VARS =======================
         self.S = S                                                      # array with number of neurons per inner layer
         self.layers = len(S)                                            # number of layers
         self.W = self.createRandomWeights()                             # array of weight matrices
         self.learningRate = learningRate                                # learning rate
+        self.maxIter = maxIter
         if (activationFuncArray == []):                                 # default funcArray uses sigmoid for every layer
             activationFuncArray = ["sigmoid"]*len(S)                    # set default activation array
         self.activationFuncArray = activationFuncArray                  # activation function for each layers
@@ -47,12 +48,24 @@ class Model():
 
 
     def train(self, X, Z):
-        for h in range(0,len(X)):
-
-            Y, dY = self.feedForward(X[h])
-            dZ = Z[h]                                  
-            dW = self.backPropagation(Y, dY, dZ)
-            self.adaptation(dW)
+        iters = 0
+        meanError = 1
+        learning = []
+        while iters < self.maxIter and meanError > 0.1:
+            errors = []
+            for h in range(0,len(X)):
+                Y, dY = self.feedForward(X[h])
+                dZ = Z[h]
+                error = dZ - Y[len(Y) - 1]
+                errors.append(error)
+                dW = self.backPropagation(Y, dY, dZ)
+                self.adaptation(dW)
+            meanError = np.mean(np.abs(errors))
+            learning.append(meanError)
+            iters += 1
+            print(meanError)
+            print(iters)
+        return iters, meanError, learning
 
 
 
@@ -98,11 +111,6 @@ class Model():
     def adaptation(self, dW): 
         for k in range(1, self.layers):
             self.W[k-1] = self.W[k-1] + dW[k-1]
-
-    # estimation function
-    def estimation(self, Y): 
-        e = self.Z - Y
-        return np.inner(e, e)
 
     # add bias to the input
     def addBias(self, x):
