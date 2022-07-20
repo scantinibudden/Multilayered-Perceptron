@@ -1,4 +1,3 @@
-from CrossValidation import CrossValidation
 import numpy as np
 import FileFunctions as ff
 from Model import Model
