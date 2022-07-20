@@ -59,7 +59,7 @@ def getData():
         Y = np.where(np.genfromtxt(arguments[2], delimiter=",", dtype=str)[
                      :, 0:1] == 'M', 1, 0)[:, :1]
         Y.astype(float)
-        S = [10, 10, 1]
+        S = [10, 10, 1, 1]
         lr = 0.35
 
     X = (X - np.min(X, axis=0))/(np.max(X, axis=0) -
@@ -67,7 +67,7 @@ def getData():
     Y = (Y - np.min(Y, axis=0))/(np.max(Y, axis=0) -
                                  np.min(Y, axis=0))  # datos de salida normalizados
 
-    model = Model(S, [], lr, 10)
+    model = Model(S, [], lr, 1000)
     return model, X, Y
 
 # -----------------------------------------------------------
