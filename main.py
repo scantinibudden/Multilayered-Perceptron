@@ -28,11 +28,11 @@ def main():
     global arguments
     if len(arguments) == 1:
 
-        arguments = ["mew uwu mew", "model_med.npy",
-                     "data/tp1_ej1_training.csv", "--med"]
+        # arguments = ["mew uwu mew", "model_med.npy",
+        #              "data/tp1_ej1_training.csv", "--med"]
 
-        # arguments = ["mew uwu mew", "model_energy.npy",
-        #              "data/tp1_ej2_training.csv", "--energy"]
+        arguments = ["mew uwu mew", "model_energy.npy",
+                      "data/tp1_ej2_training.csv", "--energy"]
 
     if (not os.path.exists(arguments[1])):    # if model file exists
 
@@ -67,7 +67,7 @@ def getData():
     Y = (Y - np.min(Y, axis=0))/(np.max(Y, axis=0) -
                                  np.min(Y, axis=0))  # datos de salida normalizados
 
-    model = Model(S, [], lr, 1000)
+    model = Model(S, [], lr, 10)
     return model, X, Y
 
 # -----------------------------------------------------------
@@ -109,7 +109,9 @@ def test_data():
 def print_results(y_pred, Y):
     error = Y - y_pred
     meanError = np.mean(np.abs(error), axis=0)
+
     print("Mean error: ", np.mean(meanError))
+    print("Last Layer: ",meanError)
 
 # -----------------------------------------------------------
 
